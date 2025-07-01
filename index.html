@@ -1,0 +1,642 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Foro de Robótica</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap');
+        
+        body {
+            font-family: 'Roboto', sans-serif;
+            background-color: #f5f7fa;
+            color: #333;
+        }
+        
+        .hero-gradient {
+            background: linear-gradient(135deg, #6e8efb 0%, #a777e3 100%);
+        }
+        
+        .discussion-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+        }
+        
+        .tag-chip {
+            transition: all 0.2s;
+        }
+        
+        .tag-chip:hover {
+            background-color: #4f46e5;
+            color: white;
+        }
+        
+        .animated-bg {
+            animation: pulse 2s infinite;
+        }
+        
+        @keyframes pulse {
+            0% {
+                background-color: #eef2ff;
+            }
+            50% {
+                background-color: #e0e7ff;
+            }
+            100% {
+                background-color: #eef2ff;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Navbar -->
+    <nav class="bg-white shadow-lg">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between h-16">
+                <div class="flex items-center">
+                    <div class="flex-shrink-0 flex items-center">
+                        <img src="https://storage.googleapis.com/workspace-0f70711f-8b4e-4d94-86f1-2a93ccde5887/image/5af71230-f6bc-46d2-8b97-8b533c638a6b.png" alt="Logo de robot industrial azul con detalles tecnológicos" class="h-8 w-8 rounded-full">
+                        <span class="ml-2 text-xl font-bold text-indigo-600">RoboForum</span>
+                    </div>
+                    <div class="hidden sm:ml-6 sm:flex sm:space-x-8">
+                        <a href="#" class="border-indigo-500 text-gray-900 inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium">Inicio</a>
+                        <a href="#" class="border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700 inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium">Categorías</a>
+                        <a href="#" class="border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700 inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium">Eventos</a>
+                        <a href="#" class="border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700 inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium">Recursos</a>
+                    </div>
+                </div>
+                <div class="hidden sm:ml-6 sm:flex sm:items-center">
+                    <div id="auth-buttons">
+                        <button onclick="showLogin()" class="bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded-md text-sm font-medium">Iniciar sesión</button>
+                        <button onclick="showRegister()" class="ml-4 bg-white hover:bg-gray-100 text-indigo-600 px-4 py-2 rounded-md text-sm font-medium border border-indigo-600">Registrarse</button>
+                    </div>
+                    <div id="user-profile" class="hidden items-center ml-4">
+                        <img id="user-avatar" src="https://storage.googleapis.com/workspace-0f70711f-8b4e-4d94-86f1-2a93ccde5887/image/374fc425-713e-4e79-9811-54529ae25b75.png" alt="Foto de perfil" class="h-8 w-8 rounded-full mr-2">
+                        <span id="username" class="text-sm font-medium"></span>
+                        <button onclick="logout()" class="ml-2 text-gray-500 hover:text-gray-700">
+                            <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
+                            </svg>
+                        </button>
+                    </div>
+                </div>
+                <div class="-mr-2 flex items-center sm:hidden">
+                    <button type="button" class="inline-flex items-center justify-center p-2 rounded-md text-gray-400 hover:text-gray-500 hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-indigo-500" aria-controls="mobile-menu" aria-expanded="false">
+                        <span class="sr-only">Abrir menú principal</span>
+                        <svg class="block h-6 w-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
+                        </svg>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <div class="hero-gradient text-white py-20">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="lg:grid lg:grid-cols-2 lg:gap-8 items-center">
+                <div>
+                    <h1 class="text-4xl font-extrabold sm:text-5xl sm:tracking-tight lg:text-6xl">
+                        Foro de Robótica
+                    </h1>
+                    <p class="mt-5 text-xl max-w-lg">
+                        Conecta con expertos y entusiastas de la robótica aplicada a soluciones prácticas e industriales.
+                    </p>
+                    <div class="mt-8">
+                        <button id="go-to-new-topic" class="bg-white text-indigo-600 px-8 py-3 rounded-md text-lg font-bold hover:bg-gray-100 transition">Únete al debate</button>
+                    </div>
+                </div>
+                <div class="mt-12 lg:mt-0">
+                    <img src="https://storage.googleapis.com/workspace-0f70711f-8b4e-4d94-86f1-2a93ccde5887/image/b0fd1f55-d31a-41e1-800e-41a0c68700c6.png" alt="Brazo robótico industrial realizando una soldadura precisa en una fábrica moderna" class="rounded-lg shadow-xl">
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main Content -->
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+            <!-- Sidebar -->
+            <div class="lg:col-span-1">
+                <div class="bg-white rounded-lg shadow p-6">
+                    <h2 class="text-lg font-bold mb-4">Categorías</h2>
+                    <ul class="sidebar space-y-2">
+                        <li><a href="#" class="text-indigo-600 hover:text-indigo-800 font-medium">Robótica Industrial</a></li>
+                        <li><a href="#" class="text-gray-700 hover:text-indigo-600">Cobots (Robots Colaborativos)</a></li>
+                        <li><a href="#" class="text-gray-700 hover:text-indigo-600">Automatización de Procesos</a></li>
+                        <li><a href="#" class="text-gray-700 hover:text-indigo-600">Robótica Médica</a></li>
+                        <li><a href="#" class="text-gray-700 hover:text-indigo-600">Integración IA en Robots</a></li>
+                        <li><a href="#" class="text-gray-700 hover:text-indigo-600">Robótica en Logística</a></li>
+                        <li><a href="#" class="text-gray-700 hover:text-indigo-600" id="all-categories-link">Todas las categorías</a></li>
+                    </ul>
+                    
+                    <div class="mt-8">
+                        <h2 class="text-lg font-bold mb-4">Etiquetas Populares</h2>
+                        <div class="flex flex-wrap gap-2">
+                            <span class="tag-chip bg-gray-100 text-gray-800 px-3 py-1 rounded-full text-sm cursor-pointer">automación</span>
+                            <span class="tag-chip bg-gray-100 text-gray-800 px-3 py-1 rounded-full text-sm cursor-pointer">PLC</span>
+                            <span class="tag-chip bg-gray-100 text-gray-800 px-3 py-1 rounded-full text-sm cursor-pointer">ROS</span>
+                            <span class="tag-chip bg-gray-100 text-gray-800 px-3 py-1 rounded-full text-sm cursor-pointer">sensores</span>
+                            <span class="tag-chip bg-gray-100 text-gray-800 px-3 py-1 rounded-full text-sm cursor-pointer">visión</span>
+                            <span class="tag-chip bg-gray-100 text-gray-800 px-3 py-1 rounded-full text-sm cursor-pointer">ABB</span>
+                            <span class="tag-chip bg-gray-100 text-gray-800 px-3 py-1 rounded-full text-sm cursor-pointer">KUKA</span>
+                            <span class="tag-chip bg-gray-100 text-gray-800 px-3 py-1 rounded-full text-sm cursor-pointer">Fanuc</span>
+                        </div>
+                    </div>
+                    
+                    <div class="mt-8">
+                        <h2 class="text-lg font-bold mb-4">Eventos Próximos</h2>
+                        <div class="space-y-4">
+                            <div class="border-l-4 border-indigo-500 pl-4 py-1">
+                                <h3 class="font-medium">Conferencia Internacional de Robótica</h3>
+                                <p class="text-sm text-gray-500">15 Jul 2025</p>
+                            </div>
+                            <div class="border-l-4 border-indigo-500 pl-4 py-1">
+                                <h3 class="font-medium">Taller de Integración Robot-CNC</h3>
+                                <p class="text-sm text-gray-500">28 Jul 2025</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Main Forum Content -->
+            <div class="lg:col-span-2">
+                <!-- Discussion Form -->
+                <div class="bg-white rounded-lg shadow mb-8 p-6">
+                    <h2 class="text-xl font-bold mb-4">Iniciar nuevo tema</h2>
+                    <form>
+                        <div class="mb-4">
+                            <label for="title" class="block text-sm font-medium text-gray-700 mb-1">Título</label>
+                            <input type="text" id="title" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500" placeholder="Escribe un título descriptivo">
+                        </div>
+                        <div class="mb-4">
+                            <label for="category" class="block text-sm font-medium text-gray-700 mb-1">Categoría</label>
+                            <select id="category" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                                <option>Selecciona una categoría</option>
+                                <option>Robótica Industrial</option>
+                                <option>Cobots (Robots Colaborativos)</option>
+                                <option>Automatización de Procesos</option>
+                            </select>
+                        </div>
+                        <div class="mb-4">
+                            <label for="content" class="block text-sm font-medium text-gray-700 mb-1">Contenido</label>
+                            <textarea id="content" rows="5" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500" placeholder="Describe tu pregunta o tema de discusión..."></textarea>
+                        </div>
+                        <div class="mb-4">
+                            <label class="block text-sm font-medium text-gray-700 mb-1">Etiquetas</label>
+                            <div class="flex">
+                                <input type="text" class="w-full px-3 py-2 border border-gray-300 rounded-l-md focus:outline-none focus:ring-2 focus:ring-indigo-500" placeholder="Añadir etiquetas (separadas por comas)">
+                                <button type="button" class="bg-indigo-600 text-white px-4 py-2 rounded-r-md hover:bg-indigo-700">Añadir</button>
+                            </div>
+                        </div>
+                        <div class="flex justify-end">
+                            <button type="submit" class="bg-indigo-600 text-white px-6 py-2 rounded-md hover:bg-indigo-700">Publicar tema</button>
+                        </div>
+                    </form>
+                </div>
+                
+                <!-- Discussions -->
+                <div class="space-y-6">
+                    <h2 class="text-2xl font-bold mb-6">Discusiones recientes</h2>
+                    <!-- Modal para comentarios -->
+                    <div id="comments-modal" class="fixed inset-0 bg-black bg-opacity-40 flex items-center justify-center z-50 hidden">
+                        <div class="bg-white rounded-lg shadow-xl w-full max-w-lg p-6 relative">
+                            <button id="close-comments-modal" class="absolute top-2 right-2 text-gray-400 hover:text-gray-700 text-2xl">&times;</button>
+                            <h3 id="modal-title" class="text-xl font-bold mb-2">Comentarios</h3>
+                            <div id="modal-comments-list" class="space-y-4 mb-4"></div>
+                            <div>
+                                <textarea id="modal-new-comment" rows="2" class="w-full px-3 py-2 border rounded-md mb-2" placeholder="Escribe un comentario..."></textarea>
+                                <button id="modal-add-comment" class="bg-indigo-600 text-white px-4 py-2 rounded-md hover:bg-indigo-700 float-right">Publicar</button>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- Tarjetas de discusión -->
+                    <div id="discussions-list">
+                        <!-- Las tarjetas se generan por JS -->
+                    </div>
+                    
+                    <!-- Pagination -->
+                    <div class="mt-8 flex justify-between items-center">
+                        <div class="text-sm text-gray-500">
+                            Mostrando <span class="font-medium">1</span> a <span class="font-medium">4</span> de <span class="font-medium">128</span> discusiones (actualizado Jul 2025)
+                        </div>
+                        <div class="flex space-x-2">
+                            <button class="px-4 py-2 border border-gray-300 rounded-md bg-white text-gray-700 hover:bg-gray-50">Anterior</button>
+                            <button class="px-4 py-2 border border-indigo-500 rounded-md bg-indigo-50 text-indigo-600 font-medium">1</button>
+                            <button class="px-4 py-2 border border-gray-300 rounded-md bg-white text-gray-700 hover:bg-gray-50">2</button>
+                            <button class="px-4 py-2 border border-gray-300 rounded-md bg-white text-gray-700 hover:bg-gray-50">3</button>
+                            <button class="px-4 py-2 border border-gray-300 rounded-md bg-white text-gray-700 hover:bg-gray-50">Siguiente</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="bg-gray-800 text-white py-12">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-8">
+                <div>
+                    <h3 class="text-lg font-bold mb-4">RoboForum</h3>
+                    <p class="text-gray-400">La comunidad líder en discusiones sobre robótica funcional e industrial.</p>
+                </div>
+                <div>
+                    <h3 class="text-lg font-bold mb-4">Enlaces útiles</h3>
+                    <ul class="space-y-2">
+                        <li><a href="#" class="text-gray-400 hover:text-white">Preguntas frecuentes</a></li>
+                        <li><a href="#" class="text-gray-400 hover:text-white">Documentación</a></li>
+                        <li><a href="#" class="text-gray-400 hover:text-white">Tutoriales</a></li>
+                        <li><a href="#" class="text-gray-400 hover:text-white">Blog técnico</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h3 class="text-lg font-bold mb-4">Recursos</h3>
+                    <ul class="space-y-2">
+                        <li><a href="#" class="text-gray-400 hover:text-white">Catálogo de robots</a></li>
+                        <li><a href="#" class="text-gray-400 hover:text-white">Biblioteca de software</a></li>
+                        <li><a href="#" class="text-gray-400 hover:text-white">Casos de estudio</a></li>
+                        <li><a href="#" class="text-gray-400 hover:text-white">Guías de selección</a></li>
+                    </ul>
+                </div>
+                
+            </div>
+            <div class="mt-12 pt-8 border-t border-gray-700 flex flex-col md:flex-row justify-between items-center">
+                <p class="text-gray-400 mb-4 md:mb-0">© 2025 RoboForum. Todos los derechos reservados.</p>
+                <div class="flex space-x-6">
+                    <a href="#" class="text-gray-400 hover:text-white">Política de privacidad</a>
+                    <a href="#" class="text-gray-400 hover:text-white">Términos de servicio</a>
+                    <a href="#" class="text-gray-400 hover:text-white">Cookies</a>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // Manejo de sesión de usuario
+        let currentUser = null;
+
+        function checkAuth() {
+            const userData = localStorage.getItem('forumUser');
+            if(userData) {
+                currentUser = JSON.parse(userData);
+                document.getElementById('auth-buttons').classList.add('hidden');
+                document.getElementById('user-profile').classList.remove('hidden');
+                document.getElementById('username').textContent = currentUser.username;
+                document.getElementById('user-avatar').src = currentUser.avatar || 'https://storage.googleapis.com/workspace-0f70711f-8b4e-4d94-86f1-2a93ccde5887/image/cdf33133-5610-4430-819e-b85e9aa9ccca.png';
+            } else {
+                // Cerrar sesión automáticamente al cargar la página si no hay usuario
+                document.getElementById('auth-buttons').classList.remove('hidden');
+                document.getElementById('user-profile').classList.add('hidden');
+            }
+        }
+
+        function showLogin() {
+            const email = prompt('Correo electrónico:');
+            const password = prompt('Contraseña:');
+            // Permitir cualquier cosa, incluso vacío
+            currentUser = { 
+                username: email ? email.split('@')[0] : 'Usuario',
+                email: email || '',
+                password: password || '',
+                avatar: 'https://storage.googleapis.com/workspace-0f70711f-8b4e-4d94-86f1-2a93ccde5887/image/93471b74-d373-469c-90c2-37704ccaa087.png'
+            };
+            localStorage.setItem('forumUser', JSON.stringify(currentUser));
+            checkAuth();
+        }
+
+        function showRegister() {
+            showLogin(); // Permitir registro igual que login
+        }
+
+        function logout() {
+            localStorage.removeItem('forumUser');
+            currentUser = null;
+            document.getElementById('auth-buttons').classList.remove('hidden');
+            document.getElementById('user-profile').classList.add('hidden');
+        }
+
+        // Verificar autenticación al cargar
+        document.addEventListener('DOMContentLoaded', () => {
+            // Cerrar sesión automáticamente al cargar la página
+            localStorage.removeItem('forumUser');
+            currentUser = null;
+            checkAuth();
+        });
+
+        // Función para el formulario de nuevo tema
+        document.querySelector('form').addEventListener('submit', function(e) {
+            e.preventDefault();
+            const title = document.getElementById('title').value;
+            const content = document.getElementById('content').value;
+            
+            if(!currentUser) {
+                alert('Debes iniciar sesión para publicar');
+                return;
+            }
+            if(title.trim() === '' || content.trim() === '') {
+                alert('Por favor completa todos los campos obligatorios');
+                return;
+            }
+            
+            // Aquí iría la lógica para enviar el tema al servidor
+            alert('Tu tema ha sido publicado con éxito');
+            this.reset();
+        });
+        
+        // Datos simulados de discusiones y comentarios
+        const discussions = [
+            {
+                id: 1,
+                title: 'Optimización de ciclos en robots ABB',
+                author: 'Carlos M.',
+                category: 'Robótica Industrial',
+                date: 'Hace 1 día',
+                content: 'Estamos implementando un sistema de paletizado con robots IRB 6700 y necesitamos reducir los tiempos de ciclo. ¿Alguien tiene experiencia optimizando parámetros de trayectoria en RobotStudio?',
+                tags: ['ABB', 'optimización', 'RobotStudio'],
+                answers: 125,
+                comments: [
+                    { author: 'Rosa P.', date: 'Hace 23 h', text: 'Sí, revisa la opción de optimización de trayectorias en RobotStudio.' },
+                    { author: 'Luis G.', date: 'Hace 20 h', text: 'También puedes ajustar la aceleración de los ejes.' }
+                ]
+            },
+            {
+                id: 2,
+                title: 'Integración de visión artificial con UR10e',
+                author: 'Ana R.',
+                category: 'Cobots (Robots Colaborativos)',
+                date: 'Hace 2 días',
+                content: 'Estamos desarrollando un sistema de pick-and-place con un cobot UR10e usando cámaras Cognex. ¿Cuál es la mejor manera de configurar la comunicación entre el sistema de visión y el controlador del robot?',
+                tags: ['UR10e', 'visión artificial', 'Cognex', 'Ethernet/IP'],
+                answers: 34,
+                comments: [
+                    { author: 'Pedro S.', date: 'Hace 1 día', text: 'Ethernet/IP es una buena opción, pero revisa la latencia.' },
+                    { author: 'María L.', date: 'Hace 1 día', text: 'Cognex tiene librerías para integración directa.' }
+                ]
+            },
+            {
+                id: 3,
+                title: 'Redundancia en sistemas robóticos críticos',
+                author: 'Mario L.',
+                category: 'Automatización de Procesos',
+                date: 'Hace 5 días',
+                content: 'Necesitamos diseñar un sistema redundante para una línea de ensamblaje donde los robots realizan operaciones críticas. ¿Qué arquitecturas de control recomiendan para garantizar disponibilidad del 99.99%?',
+                tags: ['redundancia', 'control', 'KUKA', 'PLC'],
+                answers: 89,
+                comments: [
+                    { author: 'Sergio T.', date: 'Hace 4 días', text: 'Arquitectura maestro-esclavo con PLCs redundantes.' },
+                    { author: 'Lucía F.', date: 'Hace 3 días', text: 'No olvides la doble alimentación eléctrica.' }
+                ]
+            },
+            {
+                id: 4,
+                title: 'Implementación de ROS en entornos industriales',
+                author: 'Luisa G.',
+                category: 'Integración IA en Robots',
+                date: 'Hace 1 semana',
+                content: '¿Es factible implementar ROS industrial para controlar robots Fanuc en producción real? Busco experiencias de casos donde se haya migrado de control tradicional a ROS manteniendo los requerimientos industriales.',
+                tags: ['ROS', 'Fanuc', 'industria 4.0'],
+                answers: 42,
+                comments: [
+                    { author: 'Miguel Z.', date: 'Hace 6 días', text: 'ROS Industrial es estable, pero requiere validación de seguridad.' },
+                    { author: 'Andrea Q.', date: 'Hace 5 días', text: 'Fanuc tiene soporte parcial, revisa la documentación oficial.' }
+                ]
+            },
+            // Más discusiones agregadas
+            {
+                id: 5,
+                title: '¿Qué sensores recomiendan para robótica móvil en almacenes?',
+                author: 'Elena V.',
+                category: 'Robótica Industrial',
+                date: 'Hace 3 días',
+                content: 'Estoy diseñando un robot móvil para inventario en almacenes. ¿Qué sensores de proximidad y navegación han dado mejores resultados?',
+                tags: ['sensores', 'almacenes', 'robótica móvil'],
+                answers: 17,
+                comments: [
+                    { author: 'Jorge N.', date: 'Hace 2 días', text: 'LIDAR y ultrasonido son una buena combinación.' },
+                    { author: 'Marta S.', date: 'Hace 1 día', text: 'No olvides los sensores ópticos para evitar obstáculos pequeños.' }
+                ]
+            },
+            {
+                id: 6,
+                title: 'Cobots en líneas de ensamblaje: mejores prácticas',
+                author: 'Raúl D.',
+                category: 'Cobots (Robots Colaborativos)',
+                date: 'Hace 4 días',
+                content: '¿Qué recomendaciones tienen para implementar cobots en líneas de ensamblaje automotriz? ¿Qué errores evitar?',
+                tags: ['cobots', 'ensamblaje', 'automotriz'],
+                answers: 28,
+                comments: [
+                    { author: 'Patricia E.', date: 'Hace 3 días', text: 'Asegura la capacitación del personal y la correcta delimitación de zonas.' },
+                    { author: 'Iván T.', date: 'Hace 2 días', text: 'Evita sobrecargar al cobot con tareas no colaborativas.' }
+                ]
+            },
+            {
+                id: 7,
+                title: 'Automatización de procesos con PLC y SCADA',
+                author: 'Sofía H.',
+                category: 'Automatización de Procesos',
+                date: 'Hace 2 días',
+                content: '¿Qué marcas de PLC y SCADA han integrado con éxito en proyectos de automatización robótica?',
+                tags: ['PLC', 'SCADA', 'automatización'],
+                answers: 53,
+                comments: [
+                    { author: 'David R.', date: 'Hace 1 día', text: 'Siemens y Allen-Bradley son muy confiables.' },
+                    { author: 'Gabriela M.', date: 'Hace 1 día', text: 'Para SCADA, revisa Wonderware y WinCC.' }
+                ]
+            },
+            {
+                id: 8,
+                title: 'Integración de IA en robots de logística',
+                author: 'Fernando C.',
+                category: 'Integración IA en Robots',
+                date: 'Hace 1 día',
+                content: '¿Alguien ha implementado algoritmos de IA para optimizar rutas de robots en centros de distribución?',
+                tags: ['IA', 'logística', 'rutas'],
+                answers: 21,
+                comments: [
+                    { author: 'Silvia P.', date: 'Hace 12 h', text: 'Puedes usar algoritmos genéticos para rutas óptimas.' },
+                    { author: 'Tomás L.', date: 'Hace 6 h', text: 'Machine learning ayuda a predecir congestión en pasillos.' }
+                ]
+            }
+        ];
+
+        // Renderizar tarjetas de discusión
+        function renderDiscussions(filterCategory = null) {
+            const list = document.getElementById('discussions-list');
+            list.innerHTML = '';
+            let filtered = discussions;
+            if (filterCategory) {
+                filtered = discussions.filter(d => d.category === filterCategory);
+            }
+            filtered.forEach(disc => {
+                const card = document.createElement('div');
+                card.className = 'discussion-card bg-white rounded-lg shadow transition duration-300 hover:shadow-lg cursor-pointer';
+                card.innerHTML = `
+                    <div class="p-6">
+                        <div class="flex items-start">
+                            <div class="flex-shrink-0">
+                                <img src="https://storage.googleapis.com/workspace-0f70711f-8b4e-4d94-86f1-2a93ccde5887/image/${disc.id === 1 ? '2698e73e-21a3-4df9-a5e2-8d35941b3ea1' : disc.id === 2 ? '7857c159-de0a-4efe-8222-660d46e69c5f' : disc.id === 3 ? 'd54a90b5-e5e7-460f-a5b7-6d8386402167' : disc.id === 4 ? 'bb1f1baf-5ed9-4751-a5fc-ebe09b6868bd' : disc.id === 5 ? 'b1b1baf-5ed9-4751-a5fc-ebe09b6868bd' : disc.id === 6 ? 'd54a90b5-e5e7-460f-a5b7-6d8386402167' : disc.id === 7 ? '7857c159-de0a-4efe-8222-660d46e69c5f' : '2698e73e-21a3-4df9-a5e2-8d35941b3ea1'}.png" class="h-12 w-12 rounded-full" alt="Avatar">
+                            </div>
+                            <div class="ml-4 flex-1">
+                                <div class="flex items-center justify-between">
+                                    <h3 class="text-lg font-bold text-indigo-600">${disc.title}</h3>
+                                    <span class="text-xs text-gray-500 bg-gray-100 px-2 py-1 rounded-full">${disc.answers} respuestas</span>
+                                </div>
+                                <div class="mt-1 flex items-center text-sm text-gray-500">
+                                    <span>Por <span class="font-medium">${disc.author}</span> en ${disc.category}</span>
+                                    <span class="mx-2">•</span>
+                                    <span>${disc.date}</span>
+                                </div>
+                                <div class="mt-3 text-sm text-gray-700">
+                                    <p>${disc.content}</p>
+                                </div>
+                                <div class="mt-4 flex flex-wrap gap-2">
+                                    ${disc.tags.map(tag => `<span class="bg-gray-100 text-gray-800 px-2 py-1 rounded-full text-xs">${tag}</span>`).join('')}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                `;
+                card.addEventListener('click', () => openCommentsModal(disc));
+                list.appendChild(card);
+            });
+        }
+
+        // Modal de comentarios
+        const commentsModal = document.getElementById('comments-modal');
+        const closeCommentsModalBtn = document.getElementById('close-comments-modal');
+        const modalTitle = document.getElementById('modal-title');
+        const modalCommentsList = document.getElementById('modal-comments-list');
+        const modalNewComment = document.getElementById('modal-new-comment');
+        const modalAddComment = document.getElementById('modal-add-comment');
+        let currentDiscussion = null;
+
+        // --- Paginación de comentarios en el modal ---
+        let commentsPage = 1;
+        const commentsPerPage = 3;
+
+        function openCommentsModal(discussion) {
+            currentDiscussion = discussion;
+            modalTitle.textContent = `Comentarios - ${discussion.title}`;
+            // Mostrar la última página de comentarios al abrir
+            commentsPage = Math.max(1, Math.ceil(currentDiscussion.comments.length / commentsPerPage));
+            renderComments();
+            commentsModal.classList.remove('hidden');
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closeCommentsModal() {
+            commentsModal.classList.add('hidden');
+            document.body.style.overflow = 'auto';
+            modalNewComment.value = '';
+        }
+
+        function renderComments() {
+            modalCommentsList.innerHTML = '';
+            const totalComments = currentDiscussion.comments.length;
+            if (!totalComments) {
+                modalCommentsList.innerHTML = '<p class="text-gray-500">No hay comentarios aún.</p>';
+                renderCommentsPagination();
+                return;
+            }
+            const totalPages = Math.ceil(totalComments / commentsPerPage);
+            if (commentsPage > totalPages) commentsPage = totalPages;
+            if (commentsPage < 1) commentsPage = 1;
+            const start = (commentsPage - 1) * commentsPerPage;
+            const end = start + commentsPerPage;
+            const pageComments = currentDiscussion.comments.slice(start, end);
+            pageComments.forEach(c => {
+                const div = document.createElement('div');
+                div.className = 'bg-gray-50 rounded p-3';
+                div.innerHTML = `<span class="font-medium text-indigo-700">${c.author}</span> <span class="text-xs text-gray-400">${c.date}</span><br><span>${c.text}</span>`;
+                modalCommentsList.appendChild(div);
+            });
+            renderCommentsPagination();
+        }
+
+        function renderCommentsPagination() {
+            // Eliminar paginación previa
+            let pag = document.getElementById('comments-pagination');
+            if (pag) pag.remove();
+            const totalComments = currentDiscussion.comments.length;
+            if (totalComments <= commentsPerPage) return;
+            const totalPages = Math.ceil(totalComments / commentsPerPage);
+            const pagDiv = document.createElement('div');
+            pagDiv.id = 'comments-pagination';
+            pagDiv.className = 'flex justify-between items-center mt-4';
+            pagDiv.innerHTML = `
+                <button id="comments-prev" class="px-3 py-1 rounded bg-gray-200 text-gray-700" ${commentsPage === 1 ? 'disabled' : ''}>Anterior</button>
+                <span class="text-sm">Página ${commentsPage} de ${totalPages}</span>
+                <button id="comments-next" class="px-3 py-1 rounded bg-gray-200 text-gray-700" ${commentsPage === totalPages ? 'disabled' : ''}>Siguiente</button>
+            `;
+            modalCommentsList.parentNode.appendChild(pagDiv);
+            document.getElementById('comments-prev').onclick = () => {
+                if (commentsPage > 1) {
+                    commentsPage--;
+                    renderComments();
+                }
+            };
+            document.getElementById('comments-next').onclick = () => {
+                if (commentsPage < totalPages) {
+                    commentsPage++;
+                    renderComments();
+                }
+            };
+        }
+
+        modalAddComment.addEventListener('click', () => {
+            const text = modalNewComment.value.trim();
+            if (!text) return;
+            currentDiscussion.comments.push({ author: currentUser ? currentUser.username : 'Invitado', date: 'Ahora', text });
+            // Ir a la última página automáticamente
+            commentsPage = Math.ceil(currentDiscussion.comments.length / commentsPerPage);
+            renderComments();
+            modalNewComment.value = '';
+        });
+
+        closeCommentsModalBtn.addEventListener('click', closeCommentsModal);
+        window.addEventListener('click', (e) => {
+            if (e.target === commentsModal) closeCommentsModal();
+        });
+
+        // Scroll a la sección de nuevo tema al hacer clic en "Únete al debate"
+        document.getElementById('go-to-new-topic').addEventListener('click', function() {
+            const formSection = document.querySelector('h2.text-xl.font-bold.mb-4');
+            if (formSection) {
+                formSection.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                // Opcional: enfocar el input de título
+                setTimeout(() => {
+                    const titleInput = document.getElementById('title');
+                    if (titleInput) titleInput.focus();
+                }, 500);
+            }
+        });
+        // Inicializar discusiones
+        renderDiscussions();
+        // Hacer que las categorías sean funcionales
+        document.querySelectorAll('.sidebar li a').forEach(link => {
+            link.addEventListener('click', function(e) {
+                e.preventDefault();
+                // Remover color de la categoría activa
+                document.querySelectorAll('.sidebar li a').forEach(l => l.classList.remove('text-indigo-600', 'font-medium'));
+                this.classList.add('text-indigo-600', 'font-medium');
+                if (this.id === 'all-categories-link') {
+                    renderDiscussions();
+                } else {
+                    renderDiscussions(this.textContent);
+                }
+            });
+        });
+        
+        // Efecto de búsqueda en tiempo real (simulado)
+        document.querySelector('input[type="text"]').addEventListener('input', function() {
+            console.log('Buscando: ', this.value);
+            // Implementación real haría una petición AJAX para filtrar resultados
+        });
+    </script>
+</body>
+</html>
