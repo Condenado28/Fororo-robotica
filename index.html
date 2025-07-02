@@ -66,8 +66,8 @@
                         <a href="#" class="border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700 inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium">Recursos</a>
                     </div>
                 </div>
-                <div class="hidden sm:ml-6 sm:flex sm:items-center">
-                    <div id="auth-buttons">
+                    <div class="sm:ml-6 sm:flex sm:items-center w-full justify-end" id="navbar-auth-container">
+                    <div id="auth-buttons" class="hidden sm:block">
                         <button onclick="showLogin()" class="bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded-md text-sm font-medium">Iniciar sesión</button>
                         <button onclick="showRegister()" class="ml-4 bg-white hover:bg-gray-100 text-indigo-600 px-4 py-2 rounded-md text-sm font-medium border border-indigo-600">Registrarse</button>
                     </div>
@@ -82,12 +82,11 @@
                     </div>
                 </div>
                 <div class="-mr-2 flex items-center sm:hidden">
-                    <button type="button" class="inline-flex items-center justify-center p-2 rounded-md text-gray-400 hover:text-gray-500 hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-indigo-500" aria-controls="mobile-menu" aria-expanded="false">
-                        <span class="sr-only">Abrir menú principal</span>
-                        <svg class="block h-6 w-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
-                        </svg>
-                    </button>
+                    <!-- Botones de autenticación para móvil -->
+                    <div class="flex items-center space-x-2 sm:hidden" id="mobile-auth-buttons">
+                        <button onclick="showLogin()" class="bg-indigo-600 hover:bg-indigo-700 text-white px-3 py-1 rounded-md text-xs font-medium">Iniciar sesión</button>
+                        <button onclick="showRegister()" class="bg-white hover:bg-gray-100 text-indigo-600 px-3 py-1 rounded-md text-xs font-medium border border-indigo-600">Registrarse</button>
+                    </div>
                 </div>
             </div>
         </div>
@@ -281,16 +280,22 @@
 
         function checkAuth() {
             const userData = localStorage.getItem('forumUser');
+            const authButtons = document.getElementById('auth-buttons');
+            const userProfile = document.getElementById('user-profile');
+            const mobileAuthButtons = document.getElementById('mobile-auth-buttons');
             if(userData) {
                 currentUser = JSON.parse(userData);
-                document.getElementById('auth-buttons').classList.add('hidden');
-                document.getElementById('user-profile').classList.remove('hidden');
+                // Mostrar solo perfil, ocultar ambos botones de login/register
+                if(authButtons) authButtons.style.display = 'none';
+                if(mobileAuthButtons) mobileAuthButtons.style.display = 'none';
+                if(userProfile) userProfile.classList.remove('hidden');
                 document.getElementById('username').textContent = currentUser.username;
                 document.getElementById('user-avatar').src = currentUser.avatar || 'https://storage.googleapis.com/workspace-0f70711f-8b4e-4d94-86f1-2a93ccde5887/image/cdf33133-5610-4430-819e-b85e9aa9ccca.png';
             } else {
-                // Cerrar sesión automáticamente al cargar la página si no hay usuario
-                document.getElementById('auth-buttons').classList.remove('hidden');
-                document.getElementById('user-profile').classList.add('hidden');
+                // Mostrar ambos botones de login/register, ocultar perfil
+                if(authButtons) authButtons.style.display = '';
+                if(mobileAuthButtons) mobileAuthButtons.style.display = '';
+                if(userProfile) userProfile.classList.add('hidden');
             }
         }
 
@@ -315,8 +320,12 @@
         function logout() {
             localStorage.removeItem('forumUser');
             currentUser = null;
-            document.getElementById('auth-buttons').classList.remove('hidden');
-            document.getElementById('user-profile').classList.add('hidden');
+            const authButtons = document.getElementById('auth-buttons');
+            const userProfile = document.getElementById('user-profile');
+            const mobileAuthButtons = document.getElementById('mobile-auth-buttons');
+            if(authButtons) authButtons.style.display = '';
+            if(mobileAuthButtons) mobileAuthButtons.style.display = '';
+            if(userProfile) userProfile.classList.add('hidden');
         }
 
         // Verificar autenticación al cargar
@@ -332,20 +341,50 @@
             e.preventDefault();
             const title = document.getElementById('title').value;
             const content = document.getElementById('content').value;
-            
-            if(!currentUser) {
-                alert('Debes iniciar sesión para publicar');
-                return;
-            }
             if(title.trim() === '' || content.trim() === '') {
                 alert('Por favor completa todos los campos obligatorios');
                 return;
             }
-            
-            // Aquí iría la lógica para enviar el tema al servidor
-            alert('Tu tema ha sido publicado con éxito');
+            // Simular publicación del tema y respuesta de IA
+            const author = currentUser ? currentUser.username : 'Invitado';
+            const categorySelect = document.getElementById('category');
+            const category = categorySelect.options[categorySelect.selectedIndex].value || 'General';
+            const tagsInput = this.querySelector('input[type="text"]');
+            const tags = tagsInput && tagsInput.value ? tagsInput.value.split(',').map(t => t.trim()).filter(Boolean) : [];
+            const newDiscussion = {
+                id: discussions.length + 1,
+                title: title,
+                author: author,
+                category: category,
+                date: 'Ahora',
+                content: content,
+                tags: tags,
+                answers: 1,
+                comments: [
+                    { author: author, date: 'Ahora', text: content },
+                    { author: 'IA RoboForum', date: 'Ahora', text: generarRespuestaIA(title, content) }
+                ]
+            };
+            discussions.unshift(newDiscussion);
+            renderDiscussions();
+            alert('Tu tema ha sido publicado con éxito. ¡La IA RoboForum te ha respondido!');
             this.reset();
         });
+
+        // Respuesta simulada de IA
+        function generarRespuestaIA(titulo, contenido) {
+            // Puedes personalizar las respuestas según el título/contenido
+            if (titulo.toLowerCase().includes('sensor')) {
+                return '¡Hola! Para temas de sensores en robótica, te recomiendo revisar tecnologías como LIDAR, ultrasonido y sensores ópticos. ¿Tienes un caso de uso específico?';
+            }
+            if (titulo.toLowerCase().includes('ros')) {
+                return 'ROS es una excelente opción para proyectos de robótica avanzada. Si necesitas recursos o tutoriales, puedo recomendarte algunos enlaces.';
+            }
+            if (contenido.length < 30) {
+                return 'Gracias por tu pregunta. ¿Podrías dar más detalles para que la comunidad (y la IA) puedan ayudarte mejor?';
+            }
+            return '¡Gracias por compartir tu tema! Un consejo inicial: asegúrate de definir claramente tu objetivo y los recursos con los que cuentas. Si necesitas ayuda más específica, dime más detalles.';
+        }
         
         // Datos simulados de discusiones y comentarios
         const discussions = [
